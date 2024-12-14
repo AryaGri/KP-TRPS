@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Список пациентов</h2>
+    <p class="text-center">Выберите пациента, чтобы просмотреть его детали и результаты.</p>
+
+    <div class="row mt-4">
+        {% for patient in patients %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ patient.full_name }}</h5>
+                    <p><strong>Дата рождения:</strong> {{ patient.date_of_birth }}</p>
+                    <a href="{% url 'patient_detail' patient.id %}" class="btn btn-primary">Просмотреть</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

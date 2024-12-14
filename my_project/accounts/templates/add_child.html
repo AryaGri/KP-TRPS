@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Добавить ребенка</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="child" class="form-label">Выберите ребенка</label>
+            <select name="child_id" id="child_id" class="form-control" required>
+                <option value="">Выберите ребенка</option>
+                {% for child in children %}
+                    <option value="{{ child.id }}">{{ child.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+    </form>
+</div>
+{% endblock %}

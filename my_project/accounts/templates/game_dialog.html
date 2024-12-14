@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Диалог</h2>
+    <p class="text-center">Выберите ответы и участвуйте в разговоре с персонажем!</p>
+
+    <div class="dialog-container mt-4">
+        <div class="dialog-box">
+            <p class="character-text">
+                {{ current_question.text }}
+            </p>
+        </div>
+
+        <div class="options mt-3">
+            <form method="post">
+                {% csrf_token %}
+                {% for option in current_question.options %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="selected_option" id="option{{ forloop.counter }}" value="{{ option.id }}" required>
+                        <label class="form-check-label" for="option{{ forloop.counter }}">
+                            {{ option.text }}
+                        </label>
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary mt-3">Ответить</button>
+            </form>
+        </div>
+    </div>
+
+    {% if previous_answers %}
+        <div class="mt-5">
+            <h4>Ваши предыдущие ответы:</h4>
+            <ul>
+                {% for answer in previous_answers %}
+                    <li>
+                        <strong>Вопрос:</strong> {{ answer.question.text }} <br>
+                        <strong>Ваш ответ:</strong> {{ answer.option.text }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

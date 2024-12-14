@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Назначение роли пользователю{% endblock %}
+
+{% block content %}
+
+    
+    <form method="post">
+        {% csrf_token %}
+        <h1>Назначить роль пользователю</h1>
+    
+        <p>Выберите роль для пользователя {{ user.username }}:</p>
+        
+        <label for="role">Выберите роль:</label>
+        <select name="role" id="role">
+            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Администратор</option>
+            <option value="doctor" {% if user.role == 'doctor' %}selected{% endif %}>Врач</option>
+            <option value="parent" {% if user.role == 'parent' %}selected{% endif %}>Родитель</option>
+            <option value="child" {% if user.role == 'child' %}selected{% endif %}>Ребёнок</option>
+        </select>
+        
+        <button id="role" type="submit">Назначить роль</button>
+        <br>
+        <p> </p>
+        <br>
+        <a href="{% url 'admin_dashboard' %}">Вернуться к панели администратора</a>
+
+    </form>
+    
+   
+{% endblock %}

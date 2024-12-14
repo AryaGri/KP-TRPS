@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="row mt-4">
+        <h1 class="text-center">Добро пожаловать, администратор!</h1>
+        <h1 class="text-center">Вы можете управлять пользователями и назначать роли.</h1>
+        <!-- Кнопка для перехода на страницу назначения ролей -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h2 class="card-title">Назначить роли</h2>
+                    <h3 class="card-text">Выберите пользователей и назначьте им роли (врач, родитель, ребёнок).</h3>
+                    <a href="adm/assign_roles/" class="btn btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопка для перехода на страницу редактирования пользователей -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h2 class="card-title">Редактировать пользователей</h2>
+                    <h3 class="card-text">Измените информацию пользователей или удалите учетные записи.</h3>
+                    <a href="adm/edit_user/user_id=1/" class="btn btn-primary">Перейти</a> <!-- Пример с user_id -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

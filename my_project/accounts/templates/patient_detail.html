@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Детали пациента</h2>
+    <p class="text-center">Просмотрите информацию и результаты для этого пациента.</p>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4 class="card-title">Информация о пациенте</h4>
+            <p><strong>ФИО:</strong> {{ patient.full_name }}</p>
+            <p><strong>Дата рождения:</strong> {{ patient.date_of_birth }}</p>
+            <p><strong>Эмоциональный статус:</strong></p>
+            <canvas id="emotionChart" width="100%" height="50"></canvas>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4 class="card-title">Результаты игр</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Игра</th>
+                        <th scope="col">Дата</th>
+                        <th scope="col">Результат</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for game_result in game_results %}
+                    <tr>
+                        <td>{{ game_result.game_title }}</td>
+                        <td>{{ game_result.date_played }}</td>
+                        <td>
+                            {% if game_result.game_type == 'painting' %}
+                                <img src="{{ game_result.result_image_url }}" alt="Результат раскраски" width="100">
+                            {% elif game_result.game_type == 'choice' %}
+                                <p>Выбранные картинки:</p>
+                                <ul>
+                                    {% for image in game_result.selected_images %}
+                                    <li><img src="{{ image }}" alt="Изображение" width="50"></li>
+                                    {% endfor %}
+                                </ul>
+                            {% elif game_result.game_type == 'dialog' %}
+                                <p>Выбранные фразы:</p>
+                                <ul>
+                                    {% for phrase in game_result.selected_phrases %}
+                                    <li>{{ phrase }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4 class="card-title">Рецепты</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Дата</th>
+                        <th scope="col">Рецепт</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prescription in prescriptions %}
+                    <tr>
+                        <td>{{ prescription.date_created }}</td>
+                        <td>{{ prescription.text }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const emotionScores = {{ emotion_scores|safe }};
+    const ctx = document.getElementById('emotionChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Радость', 'Грусть', 'Злость', 'Любовь', 'Скука', 'Интерес'],
+            datasets: [{
+                label: 'Эмоциональные баллы',
+                data: emotionScores,
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

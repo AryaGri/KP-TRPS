@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Игра: Выбор картинки</h2>
+    <p class="text-center">Выберите одну из трех картинок, которая вам больше всего нравится.</p>
+
+    <form method="post" action="{% url 'game_choice_submit' %}">
+        {% csrf_token %}
+        <div class="row">
+            {% for image in images %}
+                <div class="col-md-4 text-center">
+                    <label>
+                        <input type="radio" name="choice" value="{{ image.id }}" required>
+                        <img src="{{ image.url }}" class="img-thumbnail my-2" alt="Картинка {{ forloop.counter }}">
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success">Отправить выбор</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

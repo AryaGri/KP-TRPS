@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+    
+
+    <div class="card mt-4">
+        <h1 class="text-center">Добро пожаловать, {{ user.first_name }}! </h1>
+        <h2>Здесь вы можете управлять информацией о пациентах.</h2>
+        <div class="card-header">
+            <h3>Список пациентов</h3>
+        </div>
+        <div class="card-body">
+            {% if patients %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Имя</th>
+                            <th>Дата рождения</th>
+                            <th>Просмотр</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patients %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+                                <td>{{ patient.date_of_birth|date:"d.m.Y" }}</td>
+                                <td>
+                                    <a href="{% url 'patient_detail' patient.id %}" class="btn btn-primary btn-sm">Подробнее</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-center">У вас пока нет пациентов.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

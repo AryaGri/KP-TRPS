@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2>Информация о ребёнке: {{ child.full_name }}</h2>
+
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Данные ребёнка</h4>
+        <ul>
+          <li><strong>ФИО:</strong> {{ child.full_name }}</li>
+          <li><strong>Дата рождения:</strong> {{ child.birth_date }}</li>
+          <li><strong>Логин:</strong> {{ child.username }}</li>
+          <li><strong>Роль:</strong> {{ child.get_role_display }}</li>
+        </ul>
+      </div>
+
+      <div class="col-md-6">
+        <h4>Диаграмма эмоций</h4>
+        <!-- Используем библиотеку для диаграмм, например, Chart.js -->
+        <canvas id="emotionChart"></canvas>
+        <script>
+          var ctx = document.getElementById('emotionChart').getContext('2d');
+          var emotionChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['Радость', 'Грусть', 'Злость', 'Любовь', 'Скука', 'Интерес'],
+              datasets: [{
+                label: 'Баллы эмоций',
+                data: [
+                  {{ child.emotions.joy }},
+                  {{ child.emotions.sadness }},
+                  {{ child.emotions.anger }},
+                  {{ child.emotions.love }},
+                  {{ child.emotions.boredom }},
+                  {{ child.emotions.interest }}
+                ],
+                backgroundColor: [
+                  'rgba(255, 159, 64, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                  'rgba(255, 159, 64, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        </script>
+      </div>
+    </div>
+
+    <hr>
+
+    <h4>Результаты игр</h4>
+    <ul>
+      {% for game in child.game_results.all %}
+        <li>
+          <strong>{{ game.game_name }}</strong>: 
+          Результат: {{ game.result }} (Баллы: {{ game.points }})
+          <br>
+          <small>Дата: {{ game.date }}</small>
+        </li>
+      {% empty %}
+        <li>Игры ещё не были сыграны.</li>
+      {% endfor %}
+    </ul>
+
+    <hr>
+
+    <h4>Рецепты</h4>
+    <ul>
+      {% for recipe in child.recipes.all %}
+        <li>
+          <strong>{{ recipe.title }}</strong> (Дата: {{ recipe.created_at }})
+          <p>{{ recipe.description }}</p>
+        </li>
+      {% empty %}
+        <li>Нет рецептов.</li>
+      {% endfor %}
+    </ul>
+
+    <a href="{% url 'child_list' %}" class="btn btn-secondary mt-3">Назад к списку детей</a>
+  </div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Раскраска</h2>
+    <p class="text-center">Творите и создавайте свои уникальные раскраски!</p>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <canvas id="paintingCanvas" width="600" height="400" style="border: 1px solid #ccc;"></canvas>
+        </div>
+        <div class="col-md-4">
+            <h5>Выберите цвет:</h5>
+            <div class="color-picker mb-3">
+                <input type="color" id="colorPicker" value="#000000">
+            </div>
+
+            <h5>Размер кисти:</h5>
+            <div class="brush-size mb-3">
+                <input type="range" id="brushSize" min="1" max="20" value="5">
+            </div>
+
+            <button id="clearCanvas" class="btn btn-secondary mb-3">Очистить</button>
+            <form method="post" action="{% url 'save_painting' %}">
+                {% csrf_token %}
+                <input type="hidden" name="painting_data" id="paintingData">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('paintingCanvas');
+    const ctx = canvas.getContext('2d');
+    const colorPicker = document.getElementById('colorPicker');
+    const brushSize = document.getElementById('brushSize');
+    const clearCanvas = document.getElementById('clearCanvas');
+    const paintingDataInput = document.getElementById('paintingData');
+
+    let painting = false;
+
+    function startPainting(e) {
+        painting = true;
+        draw(e);
+    }
+
+    function endPainting() {
+        painting = false;
+        ctx.beginPath();
+    }
+
+    function draw(e) {
+        if (!painting) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        ctx.lineWidth = brushSize.value;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = colorPicker.value;
+
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    }
+
+    canvas.addEventListener('mousedown', startPainting);
+    canvas.addEventListener('mouseup', endPainting);
+    canvas.addEventListener('mousemove', draw);
+
+    clearCanvas.addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    document.querySelector('form').addEventListener('submit', () => {
+        const dataURL = canvas.toDataURL();
+        paintingDataInput.value = dataURL;
+    });
+</script>
+{% endblock %}
