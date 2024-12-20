@@ -12,14 +12,19 @@
       </div>
 
       <div class="form-group">
-        <label for="full_name">ФИО:</label>
-        <input type="text" name="full_name" id="full_name" class="form-control" value="{{ user.full_name }}" required>
+        <label for="name">ФИО:</label>
+        <input type="text" name="name" id="name" class="form-control" value="{{ user.name }}" required>
       </div>
 
       <div class="form-group">
-        <label for="birth_date">Дата рождения:</label>
-        <input type="date" name="birth_date" id="birth_date" class="form-control" value="{{ user.birth_date }}" required>
+        <label for="date_of_b">Дата рождения:</label>
+        <input type="date" name="date_of_b" id="date_of_b" class="form-control" value="{{ user.date_of_b|date:'Y-m-d' }}" required>
+
       </div>
+      <div class="form-group">
+        <label for="password">Пароль:</label>
+        <input type="text" name="password" id="password" class="form-control" value="{{ user.password}}" required>
+        </div>
 
       <div class="form-group">
         <label for="role">Роль:</label>

@@ -8,36 +8,23 @@
             <p class="text-center">Введите свои учетные данные для входа.</p>
             <div class="card">
                 <div class="card-body">
-                    <form method="post">
+                    <form method="POST">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Имя пользователя</label>
-                            <input type="text" id="username" name="username" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Пароль</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
-                            <button type="button" class="btn btn-outline-secondary" id="togglePassword">
-                                Показать
-                            </button>
-                        </div>
-                        {% if error_message %}
-                            <div class="alert alert-danger" role="alert">
-                                {{ error_message }}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Войти</button>
+                      </form>
+                      {% for message in messages %}
+                            <div class="alert alert-danger">
+                            {{ message }}
                             </div>
-                        {% endif %}
-                        <button type="submit" class="btn btn-primary w-100">Войти</button>
-                    </form>
+                        {% endfor %}
                 </div>
             </div>
-            <p class="text-center mt-3">
-                Ещё нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a>
-            </p>
         </div>
     </div>
 </div>
 
-<script>
+{% comment %} <script>
     // Переключение видимости пароля
     document.getElementById('togglePassword').addEventListener('click', function () {
         const passwordField = document.getElementById('password');
@@ -48,5 +35,5 @@
         this.textContent = type === 'password' ? 'Показать' : 'Скрыть';
     });
 
-</script>
+</script> {% endcomment %}
 {% endblock %}

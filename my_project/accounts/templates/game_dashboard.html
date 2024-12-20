@@ -1,43 +1,44 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <div class="container">
-    <h2 class="text-center">Выберите игру</h2>
-    <p class="text-center">Игры помогут вам развить свои навыки и получить удовольствие!</p>
+    <form class='form1'>
+        <h2 class="text-center">Выбери игру</h2>
 
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card text-center">
-                <img src="{% static 'images/paint_game.jpg' %}" class="card-img-top" alt="Раскраска">
-                <div class="card-body">
-                    <h5 class="card-title">Раскраска</h5>
-                    <p class="card-text">Творите и раскрашивайте красивые рисунки!</p>
-                    <a href="{% url 'game_painting' %}" class="btn btn-primary">Играть</a>
+        <div class="row mt-4">
+            {% csrf_token %}
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <img src="{% static 'img/paint_game.jpg' %}" class="card-img-top" alt="Раскраска">
+                    <div class="card-body">
+                        <h5 class="card-title">Раскраска</h5>
+                        <a href="{% url 'painting_game' user.id %}" class="btn btn-primary">Играть</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <img src="{% static 'img/choice_game.jpg' %}" class="card-img-top" alt="Выбор картинки">
+                    <div class="card-body">
+                        <h5 class="card-title">Выбор картинки</h5>
+                        <a href="{% url 'game_choice' user.id %}" class="btn btn-primary">Играть</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <img src="{% static 'img/dialog_game.jpg' %}" class="card-img-top" alt="Диалог">
+                    <div class="card-body">
+                        <h5 class="card-title">Диалог</h5>
+                        <a href="{% url 'game_dialog' user.id %}" class="btn btn-primary">Играть</a>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card text-center">
-                <img src="{% static 'images/choice_game.jpg' %}" class="card-img-top" alt="Выбор картинки">
-                <div class="card-body">
-                    <h5 class="card-title">Выбор картинки</h5>
-                    <p class="card-text">Выберите ту картинку, которая вам больше нравится.</p>
-                    <a href="{% url 'game_choice' %}" class="btn btn-primary">Играть</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card text-center">
-                <img src="{% static 'images/dialog_game.jpg' %}" class="card-img-top" alt="Диалог">
-                <div class="card-body">
-                    <h5 class="card-title">Диалог</h5>
-                    <p class="card-text">Общайтесь с персонажем и выбирайте свои ответы.</p>
-                    <a href="{% url 'game_dialog' %}" class="btn btn-primary">Играть</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    </form>
 </div>
 {% endblock %}

@@ -8,20 +8,33 @@
     <title>{% block title %}Платформа для детей{% endblock %}</title>
     <style>
 
-        html, body {
-            height: 100%; /* Устанавливаем 100% высоты для всей страницы */
-            
-        }
-        /* Общие стили */
+html, body {
+    height: 100%; 
+    margin: 0; 
+    display: flex;
+    flex-direction: column; 
+}
+
 body {
-    display: grid; /* Делаем body grid контейнером */
-    grid-template-rows: 1fr auto; /* 1fr для основного контента, auto для футера */
-    font-family: 'Arial', sans-serif;
+    font-family: 'Muller';
     margin: 0;
-    
     background-color: #f8f9fa;
     color: #343a40;
-    font-size: 1.5rem;
+    
+}
+
+main {
+    flex: 1; /* Занимает оставшееся пространство */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрирует контент по вертикали */
+    align-items: center; /* Центрирует контент по горизонтали */
+    padding: 20px; 
+}
+
+.color-btn{
+    height:20px;
+    weight: 80px;
 }
 
 ul{
@@ -33,6 +46,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .container {
+    margin-top: 20px;
+    background: white;
+    text-align: center;
+    align-items: center;
+    display: flex;            /* Включаем flexbox */
+    justify-content: center;  /* Выравниваем по горизонтали */
+    flex-direction: column;
+    height: 70vh; 
+    font-size: 2rem;
+           
+}
+
+.container7 {
     margin-top: 20px;
     background: white;
     text-align: center;
@@ -57,6 +83,7 @@ h1, h2, h3, h4, h5, h6 {
 .container2 {
     margin-top: 20px;
     background: #218838;
+     box-shadow: 0 10px 30px rgba(2, 126, 39, 0.4);
 }
 
 /* Стили для навигации */
@@ -69,6 +96,7 @@ header {
     align-items: center; /* Центрируем элементы по высоте */
     padding: 0 20px;
     height: 170px;
+    z-index: 1000;
 }
 
 header .navbar {
@@ -131,13 +159,34 @@ header .nav-item a:active {
     border-color: #1e7e34;
 }
 
-/* Формы */
+a {
+    color: #343a40; /* Цвет текста для всех ссылок */
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+    color: #218838; /* Цвет при наведении */
+}
+
 form {
+    
     background-color: white;
-    padding: 20px;
+    padding: 50px;
     font-size: 2rem;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(2, 126, 39, 0.4);
+    margin: 0px 15vh; 
+    flex-direction: column; /* Выравнивание содержимого по вертикали */
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.form1{
+    overflow-y: scroll;
+}
+
+.table_form{
+    overflow-y: scroll;
 }
 
 .form-control {
@@ -159,29 +208,31 @@ form {
     margin-right: 10px;
 }
 
-/* Footer */
-footer {
-    background-color: #218838;
-    color: white;
-    padding: 10px 0;
-    text-align: center;
-    margin-top: 30px;
-    height: 170px;
-    text-align: center;
-    align-items: center;
+form p {
+    margin-bottom: 15px; /* Увеличиваем отступы между полями */
 }
-
-footer a {
-    color: #218838;
-    text-decoration: none;
+form p label {
+    display: block; /* Делаем метки блочными элементами */
+    font-size: 2rem; /* Увеличиваем размер шрифта меток */
+    margin-bottom: 5px; /* Отступ снизу метки */
+    color: #343a40; /* Цвет текста */
 }
-
-footer a:hover {
-    text-decoration: underline;
+form p input {
+    width: 100%; /* Поля занимают всю ширину родителя */
+    padding: 10px; /* Увеличиваем внутренние отступы */
+    font-size: 2rem; /* Увеличиваем размер шрифта */
+    border: 1px solid #ced4da; /* Цвет рамки */
+    border-radius: 5px; /* Скругляем углы */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+form p input:focus {
+    border-color: #99FFB8; /* Цвет рамки при фокусе */
+    box-shadow: 0 0 5px rgba(153, 255, 184, 0.5); /* Тень при фокусе */
+    outline: none;
 }
 
 .card-body{
-    background: #99FFB8;
+    background: white;
     color: black; 
     border-radius: 8px;
 }
@@ -210,6 +261,7 @@ tr:hover{
     display: block;  /* Убирает возможные отступы снизу (которые появляются из-за inline-block) */
     object-fit: cover; /* Подгоняет изображение, чтобы оно полностью заполнило контейнер */
     border-color:white;
+    
 }
 
 /* Адаптивность */
@@ -230,17 +282,19 @@ tr:hover{
     <header>
         <div class="container3">
             <!-- Логотип с переходом на главную страницу -->
-            <a href="../" class="logo">
+
+            <div class="logo">
                 <img src="{% static 'img/logo.png' %}" alt="Логотип">
-            </a>
+            </div>
         </div>
             <!-- Навигация с кнопкой входа -->
             <nav class="navbar">
                 <ul>
-                    {% if user.is_authenticated %}
-                        <li class="nav-item"><a href="{% url 'logout' %}">Выход</a></li>
+                    {% url 'home' as home_url %}
+                    {% if request.path == home_url or request.path == '/login/'%}
+                        <li class="nav-item"><a href="{% url 'login' %}">Вход</a></li>
                     {% else %}
-                        <li class="nav-item"><a href="login/">Вход</a></li>
+                        <li class="nav-item"><a href="{% url 'logout' %}">Выход</a></li>
                     {% endif %}
                 </ul>
             </nav>
@@ -257,10 +311,6 @@ tr:hover{
     </main>
 
     <!-- Футер -->
-    <footer>
-        <div class="container2">
-            <p>&copy; 2024 Платформа для детей. Все права защищены.</p>
-        </div>
-    </footer>
+
 </body>
 </html>

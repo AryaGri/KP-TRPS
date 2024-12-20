@@ -1,83 +1,118 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h2 class="text-center">Раскраска</h2>
-    <p class="text-center">Творите и создавайте свои уникальные раскраски!</p>
+<h1>Игра: Раскраска</h1>
 
-    <div class="row mt-4">
-        <div class="col-md-8">
-            <canvas id="paintingCanvas" width="600" height="400" style="border: 1px solid #ccc;"></canvas>
-        </div>
-        <div class="col-md-4">
-            <h5>Выберите цвет:</h5>
-            <div class="color-picker mb-3">
-                <input type="color" id="colorPicker" value="#000000">
-            </div>
+<p>Выберите цвет и рисуйте на холсте!</p>
 
-            <h5>Размер кисти:</h5>
-            <div class="brush-size mb-3">
-                <input type="range" id="brushSize" min="1" max="20" value="5">
-            </div>
+<!-- Контейнер с холстом -->
+<canvas id="paintingCanvas" width="500" height="500" style="border: 1px solid #000;"></canvas>
 
-            <button id="clearCanvas" class="btn btn-secondary mb-3">Очистить</button>
-            <form method="post" action="{% url 'save_painting' %}">
-                {% csrf_token %}
-                <input type="hidden" name="painting_data" id="paintingData">
-                <button type="submit" class="btn btn-primary">Сохранить</button>
-            </form>
-        </div>
-    </div>
+<div>
+    <!-- Кнопки для выбора цвета -->
+    <button type="button" class="color-button" data-emotion="anger" data-color="красная" style="background-color: red;">Красная</button>
+    <button type="button" class="color-button" data-emotion="joy" data-color="оранжевая" style="background-color: orange;">Оранжевая </button>
+    <button type="button" class="color-button" data-emotion="joy" data-color="жёлтая" style="background-color: yellow;">Жёлтая </button>
+    <button type="button" class="color-button" data-emotion="happiness" data-color="зелёная" style="background-color: green;">Зелёная </button>
+    <button type="button" class="color-button" data-emotion="sorrow" data-color="синяя" style="background-color: blue;">Синяя</button>
+    <button type="button" class="color-button" data-emotion="love" data-color="фиолетовая" style="background-color: purple;">Фиолетовая</button>
 </div>
 
+<form method="post" class='form1'>
+    {% csrf_token %}
+    
+    <!-- Скрытые поля для передачи баллов на сервер -->
+    <input type="hidden" name="anger" id="anger" value="0">
+    <input type="hidden" name="joy" id="joy" value="0">
+    <input type="hidden" name="sorrow" id="sorrow" value="0">
+    <input type="hidden" name="love" id="love" value="0">
+    <input type="hidden" name="boredom" id="boredom" value="0">
+    <input type="hidden" name="happiness" id="happiness" value="0">
+    <a href="{% url 'game_dashboard' user.id %}" class="btn btn-secondary mt-3">Назад к дашборду</a>
+  <br>
+</form>
+
+
+
+
 <script>
-    const canvas = document.getElementById('paintingCanvas');
-    const ctx = canvas.getContext('2d');
-    const colorPicker = document.getElementById('colorPicker');
-    const brushSize = document.getElementById('brushSize');
-    const clearCanvas = document.getElementById('clearCanvas');
-    const paintingDataInput = document.getElementById('paintingData');
+// Инициализация холста
+const canvas = document.getElementById('paintingCanvas');
+const ctx = canvas.getContext('2d');
+let currentColor = 'black';  // По умолчанию черный цвет для рисования
 
-    let painting = false;
+// Флаг для отслеживания рисования
+let painting = false;
 
-    function startPainting(e) {
-        painting = true;
-        draw(e);
-    }
+// Получаем положение канваса на странице
+const canvasRect = canvas.getBoundingClientRect();
 
-    function endPainting() {
-        painting = false;
-        ctx.beginPath();
-    }
+// Функция для начала рисования
+canvas.addEventListener('mousedown', (e) => {
+    painting = true;
+    draw(e); // Начинаем рисование сразу при клике
+});
 
-    function draw(e) {
-        if (!painting) return;
+// Останавливаем рисование при отпускании кнопки мыши
+canvas.addEventListener('mouseup', () => {
+    painting = false;
+    ctx.beginPath(); // Заканчиваем рисование и начинаем новый путь
+});
 
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+// Обработчик движения мыши
+canvas.addEventListener('mousemove', draw);
 
-        ctx.lineWidth = brushSize.value;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = colorPicker.value;
+// Функция рисования
+function draw(e) {
+    if (!painting) return;
 
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-    }
+    // Получаем координаты мыши относительно канваса
+    const mouseX = e.clientX - canvasRect.left;
+    const mouseY = e.clientY - canvasRect.top;
 
-    canvas.addEventListener('mousedown', startPainting);
-    canvas.addEventListener('mouseup', endPainting);
-    canvas.addEventListener('mousemove', draw);
+    // Устанавливаем стиль рисования
+    ctx.lineWidth = 5;  // Толщина линии
+    ctx.lineCap = 'round';  // Сглаженные углы линии
+    ctx.strokeStyle = currentColor;  // Цвет линии
 
-    clearCanvas.addEventListener('click', () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Рисуем линию
+    ctx.lineTo(mouseX, mouseY);
+    ctx.stroke();
+
+    // Перемещаем начало линии в текущую позицию мыши
+    ctx.beginPath();
+    ctx.moveTo(mouseX, mouseY);
+}
+
+// Обработка выбора цвета
+document.querySelectorAll('.color-button').forEach(button => {
+    button.addEventListener('click', function() {
+        const emotion = this.getAttribute('data-emotion');  // Эмоция, которая соответствует цвету
+        const color = this.getAttribute('data-color');     // Сам цвет
+
+        // Устанавливаем цвет для рисования
+        if (color === 'красная') {
+            currentColor = 'red';
+        } else if (color === 'оранжевая') {
+            currentColor = 'orange';
+        } else if (color === 'жёлтая') {
+            currentColor = 'yellow';
+        } else if (color === 'зелёная') {
+            currentColor = 'green';
+        } else if (color === 'синяя') {
+            currentColor = 'blue';
+        } else if (color === 'фиолетовая') {
+            currentColor = 'purple';
+        }
+
+        // Увеличиваем балл для выбранной эмоции
+        let currentValue = parseInt(document.getElementById(emotion).value) || 0;
+        document.getElementById(emotion).value = currentValue + 1;
+
+        // Выводим текущие значения баллов в консоль (для проверки)
+        console.log(`${emotion}: ${document.getElementById(emotion).value}`);
     });
-
-    document.querySelector('form').addEventListener('submit', () => {
-        const dataURL = canvas.toDataURL();
-        paintingDataInput.value = dataURL;
-    });
+});
 </script>
+
 {% endblock %}

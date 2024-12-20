@@ -1,32 +1,44 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5">                    
+                    <form  method="get" action="{% url 'admin_dashboard' %}">
+                        <h3>Фильтровать пользователей по роли</h3>
+                        <div class="form-group">
+                            <label for="role">Роль:</label>
+                            <select name="role" id="role" class="form-control">
+                                <option value="">Все</option>
+                                <option value="admin" {% if request.GET.role == 'admin' %}selected{% endif %}>Администратор</option>
+                                <option value="doctor" {% if request.GET.role == 'doctor' %}selected{% endif %}>Врач</option>
+                                <option value="parent" {% if request.GET.role == 'parent' %}selected{% endif %}>Родитель</option>
+                                <option value="child" {% if request.GET.role == 'child' %}selected{% endif %}>Ребёнок</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Применить фильтр</button>
 
-    <div class="row mt-4">
-        <h1 class="text-center">Добро пожаловать, администратор!</h1>
-        <h1 class="text-center">Вы можете управлять пользователями и назначать роли.</h1>
-        <!-- Кнопка для перехода на страницу назначения ролей -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h2 class="card-title">Назначить роли</h2>
-                    <h3 class="card-text">Выберите пользователей и назначьте им роли (врач, родитель, ребёнок).</h3>
-                    <a href="adm/assign_roles/" class="btn btn-primary">Перейти</a>
-                </div>
-            </div>
-        </div>
+                    </form>
+                    <form class='form1'>
+                        <h3>Редактировать пользователей</h3>
+                        {% csrf_token %}
+                        {% for user in users %}
+                            <p>{{user.name|safe}}, {{user.get_role_display|safe}}</p>
+                            {% if user.role == 'child' %}
+                            <a href={% url 'edit_user' user.id %} class="btn btn-primary">Перейти</a>
+                            {% elif user.role == 'parent' %}
+                            <a href={% url 'edit_parent' user.id %} class="btn btn-primary">Перейти</a>
+                            {% elif user.role == 'doctor' %}
+                            <a href={% url 'edit_doctor' user.id %} class="btn btn-primary">Перейти</a>
+                            {% elif user.role == 'admin' %}
+                            <a href={% url 'edit_user' user.id %} class="btn btn-primary">Перейти</a>
+                            {% endif %}
+                            <br>
+                            <p> </p>
+                        {% endfor %}
+                        <br>                        
+                    </form>
+                    
+                    <a href="{% url 'register' %}">Создать нового пользователя</a>
 
-        <!-- Кнопка для перехода на страницу редактирования пользователей -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h2 class="card-title">Редактировать пользователей</h2>
-                    <h3 class="card-text">Измените информацию пользователей или удалите учетные записи.</h3>
-                    <a href="adm/edit_user/user_id=1/" class="btn btn-primary">Перейти</a> <!-- Пример с user_id -->
-                </div>
-            </div>
-        </div>
-    </div>
+  
 </div>
 {% endblock %}
